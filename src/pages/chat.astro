@@ -1,0 +1,181 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<div class="chat-page">
+		<header class="chat-header">
+			<a class="back" href="/">← Back to Painora</a>
+			<span class="pill">Live AI intake (preview)</span>
+		</header>
+
+		<main class="chat-shell">
+			<div class="chat-hero">
+				<h1>Declare your pain</h1>
+				<p>
+					Tell Painora what hurts in your project. The AI will ask clarifying
+					questions to make sure the pain is precise and actionable.
+				</p>
+			</div>
+
+			<div class="chat-window">
+				<div class="bubble user">I need a calendar for all my friends’ birthdays.</div>
+				<div class="bubble ai">
+					Got it. Is this for personal reminders, or a shared group view?
+				</div>
+				<div class="bubble user">Personal reminders. I also want SMS alerts.</div>
+				<div class="bubble ai">
+					How many contacts on average, and how far ahead should reminders fire?
+				</div>
+				<div class="bubble ai muted">Awaiting your reply…</div>
+			</div>
+
+			<div class="chat-input-bar">
+				<input type="text" placeholder="Type your pain here..." />
+				<button type="button">Send</button>
+			</div>
+			<p class="hint">This is a preview UI. Connect it to your AI endpoint when ready.</p>
+		</main>
+	</div>
+</Layout>
+
+<style>
+	:global(body) {
+		margin: 0;
+		background: #0c0b11;
+		color: #f5f2ea;
+		font-family: 'Space Grotesk', system-ui, sans-serif;
+	}
+
+	:global(*) {
+		box-sizing: border-box;
+	}
+
+	.chat-page {
+		min-height: 100vh;
+		padding: 32px clamp(20px, 6vw, 96px) 64px;
+		background:
+			radial-gradient(circle at 20% 10%, rgba(104, 199, 209, 0.2), transparent 55%),
+			radial-gradient(circle at 80% 20%, rgba(243, 163, 92, 0.2), transparent 50%),
+			linear-gradient(150deg, rgba(12, 11, 17, 0.95), rgba(16, 14, 24, 0.95));
+	}
+
+	.chat-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 32px;
+	}
+
+	.back {
+		color: rgba(245, 242, 234, 0.7);
+		text-decoration: none;
+		font-size: 14px;
+	}
+
+	.pill {
+		padding: 6px 12px;
+		border-radius: 999px;
+		background: rgba(104, 199, 209, 0.2);
+		color: #68c7d1;
+		font-size: 12px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.chat-shell {
+		max-width: 720px;
+		display: grid;
+		gap: 24px;
+	}
+
+	.chat-hero h1 {
+		font-family: 'Fraunces', 'Times New Roman', serif;
+		font-size: clamp(32px, 5vw, 56px);
+		margin: 0 0 12px;
+	}
+
+	.chat-hero p {
+		margin: 0;
+		color: rgba(245, 242, 234, 0.75);
+	}
+
+	.chat-window {
+		display: grid;
+		gap: 12px;
+		padding: 24px;
+		border-radius: 24px;
+		background: rgba(20, 19, 30, 0.9);
+		border: 1px solid rgba(245, 242, 234, 0.08);
+		box-shadow: 0 24px 60px rgba(12, 11, 17, 0.6);
+	}
+
+	.bubble {
+		padding: 12px 16px;
+		border-radius: 16px;
+		max-width: 85%;
+		font-size: 15px;
+		line-height: 1.5;
+	}
+
+	.bubble.user {
+		justify-self: end;
+		background: linear-gradient(120deg, rgba(243, 163, 92, 0.2), rgba(243, 96, 104, 0.18));
+		border: 1px solid rgba(243, 163, 92, 0.35);
+	}
+
+	.bubble.ai {
+		justify-self: start;
+		background: rgba(245, 242, 234, 0.05);
+		border: 1px solid rgba(245, 242, 234, 0.1);
+	}
+
+	.bubble.muted {
+		color: rgba(245, 242, 234, 0.5);
+		font-style: italic;
+	}
+
+	.chat-input-bar {
+		display: flex;
+		gap: 12px;
+		padding: 12px 16px;
+		border-radius: 18px;
+		border: 1px solid rgba(245, 242, 234, 0.2);
+		background: rgba(12, 11, 17, 0.8);
+	}
+
+	.chat-input-bar input {
+		flex: 1;
+		border: none;
+		background: transparent;
+		color: inherit;
+		font-size: 15px;
+		outline: none;
+	}
+
+	.chat-input-bar button {
+		border: none;
+		border-radius: 999px;
+		padding: 10px 18px;
+		font-size: 14px;
+		background: linear-gradient(120deg, #f3a35c, #f16068);
+		color: #0c0b11;
+		cursor: pointer;
+	}
+
+	.hint {
+		margin: 0;
+		font-size: 13px;
+		color: rgba(245, 242, 234, 0.5);
+	}
+
+	@media (max-width: 720px) {
+		.chat-input-bar {
+			flex-direction: column;
+		}
+
+		.chat-input-bar button {
+			width: 100%;
+		}
+	}
+</style>
