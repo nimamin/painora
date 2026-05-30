@@ -55,9 +55,10 @@ const mockProposals = [
 		<header class="nav">
 			<a class="back" href="/pains">← Pain library</a>
 			<div class="nav-right">
-				<span class={`status status-${pain.status}`}>
-					{pain.status === 'merging' ? 'Merging now' : pain.status === 'active' ? 'Active' : 'New'}
-				</span>
+				{pain.status === 'merging'
+					? <a class="status status-merging" href="/merge">Merging now →</a>
+					: <span class={`status status-${pain.status}`}>{pain.status === 'active' ? 'Active' : 'New'}</span>
+				}
 				<a class="primary" href="#propose">Propose a solution</a>
 			</div>
 		</header>
@@ -282,7 +283,7 @@ const mockProposals = [
 
 	.status-new     { background: rgba(245,242,234,0.08); color: rgba(245,242,234,0.6); }
 	.status-active  { background: rgba(104,199,209,0.15); color: #68c7d1; }
-	.status-merging { background: rgba(243,163,92,0.2);  color: #f3a35c; }
+	.status-merging { background: rgba(243,163,92,0.2); color: #f3a35c; text-decoration: none; }
 
 	.primary {
 		background: linear-gradient(120deg, #f3a35c, #f16068);

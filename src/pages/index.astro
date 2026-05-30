@@ -99,6 +99,7 @@ import Layout from '../layouts/Layout.astro';
 						Problem solvers compete, collaborate, and merge. Original designers
 						keep IP ownership and license it to developers who build the product.
 					</p>
+					<a class="merge-link" href="/merge">Watch a Merge Festival live →</a>
 				</div>
 				<div class="steps">
 					<div class="step reveal delay-1">
@@ -458,6 +459,17 @@ import Layout from '../layouts/Layout.astro';
 		color: rgba(245, 242, 234, 0.7);
 		font-size: 15px;
 	}
+
+	.merge-link {
+		display: inline-block;
+		margin-top: 18px;
+		font-size: 14px;
+		color: #f3a35c;
+		text-decoration: none;
+		transition: opacity 0.2s;
+	}
+
+	.merge-link:hover { opacity: 0.75; }
 
 	.split {
 		display: grid;
