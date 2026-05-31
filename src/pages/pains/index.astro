@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { PAINS } from '../../data/pains';
+// Pain with status 'merging' links to the live Merge Festival
+
 
 const categoryColor: Record<string, string> = {
 	social:    '#f3a35c',
@@ -37,8 +39,8 @@ const statusLabel: Record<string, string> = {
 		<div class="grid">
 			{PAINS.map((pain, i) => (
 				<a
-					class={`card reveal delay-${(i % 4) + 1}`}
-					href={`/pains/${pain.id}`}
+					class={`card reveal delay-${(i % 4) + 1}${pain.status === 'merging' ? ' card-merging' : ''}`}
+					href={pain.status === 'merging' ? '/merge' : `/pains/${pain.id}`}
 					style={`--accent: ${categoryColor[pain.category]}`}
 				>
 					<div class="card-top">
@@ -196,6 +198,15 @@ const statusLabel: Record<string, string> = {
 		background: var(--accent);
 		border-radius: 3px 0 0 3px;
 		opacity: 0.7;
+	}
+
+	.card-merging {
+		animation: card-shimmer 3s ease-in-out infinite;
+	}
+
+	@keyframes card-shimmer {
+		0%, 100% { box-shadow: 0 0 0 1px rgba(243,163,92,0.15), 0 8px 32px rgba(0,0,0,0.3); }
+		50%       { box-shadow: 0 0 0 1px rgba(243,163,92,0.4),  0 8px 40px rgba(243,163,92,0.1); }
 	}
 
 	.card:hover {

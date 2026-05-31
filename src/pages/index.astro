@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout>
+<Layout title="Painora — Problems are more valuable than ideas">
 	<div class="page">
 		<header class="nav">
 			<div class="logo">Painora</div>
@@ -20,18 +20,18 @@ import Layout from '../layouts/Layout.astro';
 
 		<main>
 			<section class="hero">
-				<div class=”hero-copy reveal delay-1”>
-					<p class=”eyebrow”>Problems are more valuable than ideas.</p>
+				<div class="hero-copy reveal delay-1">
+					<p class="eyebrow">Problems are more valuable than ideas.</p>
 					<h1>
 						Turn real human pain into<br />real products — together.
 					</h1>
-					<p class=”subhead”>
+					<p class="subhead">
 						Describe what hurts. AI refines the problem. Designers propose solutions.
 						The community merges the best ideas into working products.
 					</p>
-				<div class=”hero-actions”>
-					<a class=”primary” href=”/chat”>Declare a pain</a>
-					<a class=”ghost” href=”#how”>See the flow</a>
+				<div class="hero-actions">
+					<a class="primary" href="/chat">Declare a pain</a>
+					<a class="ghost" href="#how">See the flow</a>
 				</div>
 					<div class="trust">
 						<span>Built for makers, problem-solvers, and bold users</span>
@@ -69,6 +69,18 @@ import Layout from '../layouts/Layout.astro';
 					</div>
 				</div>
 			</section>
+
+			<!-- Demo flow strip -->
+			<nav class="demo-flow reveal">
+				<span class="demo-label">Demo</span>
+				<a href="/chat">① Declare</a>
+				<span class="demo-sep">→</span>
+				<a href="/pains">② Browse pains</a>
+				<span class="demo-sep">→</span>
+				<a href="/pains/birthday-blindspot">③ Explore a pain</a>
+				<span class="demo-sep">→</span>
+				<a href="/merge">④ Merge Festival</a>
+			</nav>
 
 			<section class="grid" id="how">
 				<div class="tile reveal delay-1">
@@ -137,22 +149,22 @@ import Layout from '../layouts/Layout.astro';
 				<div class="quote-grid">
 					<article class="reveal delay-1">
 						<p>
-							“Painora makes IP clear from day one. Designers lead, builders
-							license, everyone wins.”
+							"Painora makes IP clear from day one. Designers lead, builders
+							license, everyone wins."
 						</p>
 						<span>Product architect</span>
 					</article>
 					<article class="reveal delay-2">
 						<p>
-							“The merge celebration creates focus. We stop debating and ship the
-							best combined plan.”
+							"The merge celebration creates focus. We stop debating and ship the
+							best combined plan."
 						</p>
 						<span>Innovation lead</span>
 					</article>
 					<article class="reveal delay-3">
 						<p>
-							“It feels like a marketplace for hard problems — with a real path
-							to ownership.”
+							"It feels like a marketplace for hard problems — with a real path
+							to ownership."
 						</p>
 						<span>Independent builder</span>
 					</article>
@@ -435,6 +447,42 @@ import Layout from '../layouts/Layout.astro';
 		margin-right: 8px;
 	}
 
+	.demo-flow {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: wrap;
+		padding: 12px 18px;
+		border-radius: 14px;
+		background: rgba(245,242,234,0.04);
+		border: 1px solid rgba(245,242,234,0.07);
+		margin-bottom: 48px;
+		font-size: 13px;
+	}
+
+	.demo-label {
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		color: rgba(245,242,234,0.3);
+		padding-right: 6px;
+		border-right: 1px solid rgba(245,242,234,0.12);
+		margin-right: 4px;
+	}
+
+	.demo-flow a {
+		color: rgba(245,242,234,0.65);
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	.demo-flow a:hover { color: #f3a35c; }
+
+	.demo-sep {
+		color: rgba(245,242,234,0.2);
+		font-size: 11px;
+	}
+
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -710,7 +758,7 @@ import Layout from '../layouts/Layout.astro';
 		}
 	}
 
-	@media (max-width: 720px) {
+	@media (max-width: 600px) {
 		.hero-card {
 			order: -1;
 		}
