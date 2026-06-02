@@ -2,7 +2,8 @@ import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { PAINS, CATEGORY_COLOR, getPain } from '@/lib/pains';
+import { CATEGORY_COLOR } from '@/lib/pains';
+import { getPainById, getProposals } from '@/lib/data';
 import ProposeForm from './ProposeForm';
 import styles from './page.module.css';
 
@@ -10,46 +11,17 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export function generateStaticParams() {
-  return PAINS.map((p) => ({ id: p.id }));
-}
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const pain = getPain(id);
+  const pain = await getPainById(id);
   return { title: pain ? `${pain.title} — Painora` : 'Pain — Painora' };
 }
 
-const MOCK_PROPOSALS = [
-  {
-    id: 1,
-    author: 'M. Reyes',
-    title: 'A relationship graph with weighted reminder cadences',
-    summary:
-      'Map contacts by closeness tier. Surface reminders 7, 3, and 1 day before — only for people who matter most.',
-    votes: 214,
-  },
-  {
-    id: 2,
-    author: 'S. Nakamura',
-    title: 'Native OS calendar + gift-suggestion AI layer',
-    summary:
-      'Sync across all contact sources. One day before, surface a curated shortlist of meaningful gifts based on past interactions.',
-    votes: 189,
-  },
-  {
-    id: 3,
-    author: 'K. Osei',
-    title: 'Community-shared birthday rituals',
-    summary:
-      'Let mutual friends coordinate on a shared gift or message. One platform entry, zero coordination overhead.',
-    votes: 143,
-  },
-];
-
 export default async function PainDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const pain = getPain(id);
+  const [pain, proposals] = await Promise.all([getPainById(id), getProposals(id)]);
   if (!pain) notFound();
 
   const accent = CATEGORY_COLOR[pain.category];
@@ -137,25 +109,31 @@ export default async function PainDetailPage({ params }: PageProps) {
               <span className={styles.count}>{pain.proposals} submitted</span>
             </div>
 
-            <div className={styles.proposalsList}>
-              {MOCK_PROPOSALS.map((p) => (
-                <div key={p.id} className={styles.proposalCard}>
-                  <div className={styles.proposalTop}>
-                    <div>
-                      <span className={styles.proposalAuthor}>{p.author}</span>
-                      <h3 className={styles.proposalTitle}>{p.title}</h3>
+            {proposals.length === 0 ? (
+              <p className={styles.proposalSummary}>
+                No proposals yet — be the first to propose a solution below.
+              </p>
+            ) : (
+              <div className={styles.proposalsList}>
+                {proposals.map((p) => (
+                  <div key={p.id} className={styles.proposalCard}>
+                    <div className={styles.proposalTop}>
+                      <div>
+                        <span className={styles.proposalAuthor}>{p.author}</span>
+                        <h3 className={styles.proposalTitle}>{p.title}</h3>
+                      </div>
+                      <div className={styles.proposalVotes}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M12 19V5M5 12l7-7 7 7" />
+                        </svg>
+                        {p.votes}
+                      </div>
                     </div>
-                    <div className={styles.proposalVotes}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M12 19V5M5 12l7-7 7 7" />
-                      </svg>
-                      {p.votes}
-                    </div>
+                    <p className={styles.proposalSummary}>{p.summary}</p>
                   </div>
-                  <p className={styles.proposalSummary}>{p.summary}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
 
           <section className={`${styles.proposeSection} ${styles.reveal} ${styles.delay3}`} id="propose">

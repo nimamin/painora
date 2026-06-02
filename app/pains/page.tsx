@@ -1,16 +1,21 @@
 import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PAINS, CATEGORY_COLOR, STATUS_LABEL } from '@/lib/pains';
+import { CATEGORY_COLOR, STATUS_LABEL } from '@/lib/pains';
+import { getPains } from '@/lib/data';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Pain library — Painora',
 };
 
+export const dynamic = 'force-dynamic';
+
 const DELAY_CLASSES = [styles.delay1, styles.delay2, styles.delay3, styles.delay4];
 
-export default function PainsIndexPage() {
+export default async function PainsIndexPage() {
+  const pains = await getPains();
+
   return (
     <div className={styles.page}>
       <header className={styles.nav}>
@@ -28,7 +33,7 @@ export default function PainsIndexPage() {
       </section>
 
       <div className={styles.grid}>
-        {PAINS.map((pain, i) => {
+        {pains.map((pain, i) => {
           const href = pain.status === 'merging' ? '/merge' : `/pains/${pain.id}`;
           const classes = [
             styles.card,

@@ -1,16 +1,33 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { getMerge, getPainById, getProposals } from '@/lib/data';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Merge Festival — Painora',
 };
 
-export default function MergePage() {
+export const dynamic = 'force-dynamic';
+
+// The seeded Merge Festival is for the birthday-blindspot pain.
+const MERGE_PAIN_ID = 'birthday-blindspot';
+
+export default async function MergePage() {
+  const [merge, pain, proposals] = await Promise.all([
+    getMerge(MERGE_PAIN_ID),
+    getPainById(MERGE_PAIN_ID),
+    getProposals(MERGE_PAIN_ID),
+  ]);
+
+  if (!merge || !pain) notFound();
+
+  const [first, second] = proposals;
+
   return (
     <div className={styles.page}>
       <header className={styles.nav}>
-        <Link className={styles.back} href="/pains/birthday-blindspot">← Back to pain</Link>
+        <Link className={styles.back} href={`/pains/${pain.id}`}>← Back to pain</Link>
         <span className={styles.pill}>Merge festival · live</span>
       </header>
 
@@ -25,25 +42,18 @@ export default function MergePage() {
 
       <div className={styles.painRef}>
         <span className={styles.painLabel}>Pain being solved</span>
-        <span className={styles.painTitle}>
-          &ldquo;I always forget my friends&apos; birthdays until the day of&rdquo;
-        </span>
+        <span className={styles.painTitle}>&ldquo;{pain.title}&rdquo;</span>
       </div>
 
       <div className={styles.arena}>
-        <div className={`${styles.proposalCard} ${styles.cardA}`}>
-          <div className={styles.cardAuthor}>M. Reyes</div>
-          <h3>Relationship graph with weighted reminders</h3>
-          <p>
-            Map contacts by closeness tier. Surface reminders 7, 3, and 1 day before — only for
-            people who matter.
-          </p>
-          <div className={styles.cardTags}>
-            <span>relationship model</span>
-            <span>tiered alerts</span>
+        {first && (
+          <div className={`${styles.proposalCard} ${styles.cardA}`}>
+            <div className={styles.cardAuthor}>{first.author}</div>
+            <h3>{first.title}</h3>
+            <p>{first.summary}</p>
+            <div className={styles.cardVotes}>↑ {first.votes} votes</div>
           </div>
-          <div className={styles.cardVotes}>↑ 214 votes</div>
-        </div>
+        )}
 
         <div className={styles.mergeZone}>
           <div className={`${styles.mergeRing} ${styles.ring1}`}></div>
@@ -61,19 +71,14 @@ export default function MergePage() {
           <div className={styles.mergeLabel}>Merging</div>
         </div>
 
-        <div className={`${styles.proposalCard} ${styles.cardB}`}>
-          <div className={styles.cardAuthor}>S. Nakamura</div>
-          <h3>Native calendar sync + AI gift suggestions</h3>
-          <p>
-            Sync across all contact sources. One day before, surface a curated shortlist of
-            meaningful gifts.
-          </p>
-          <div className={styles.cardTags}>
-            <span>cross-platform sync</span>
-            <span>gift intelligence</span>
+        {second && (
+          <div className={`${styles.proposalCard} ${styles.cardB}`}>
+            <div className={styles.cardAuthor}>{second.author}</div>
+            <h3>{second.title}</h3>
+            <p>{second.summary}</p>
+            <div className={styles.cardVotes}>↑ {second.votes} votes</div>
           </div>
-          <div className={styles.cardVotes}>↑ 189 votes</div>
-        </div>
+        )}
       </div>
 
       <div className={styles.resultWrap}>
@@ -89,29 +94,25 @@ export default function MergePage() {
             <span className={styles.badgeDot}></span>
             Merged result · v1
           </div>
-          <h2>Relationship-aware birthday OS with gift intelligence</h2>
-          <p className={styles.mergedDesc}>
-            A unified system that maps contact closeness, syncs across all calendar sources, and
-            surfaces proactive reminders with curated gift ideas — weighted by how much you care
-            about each person.
-          </p>
+          <h2>{merge.title}</h2>
+          <p className={styles.mergedDesc}>{merge.description}</p>
           <div className={styles.mergedAttrs}>
             <div className={styles.attr}>
               <span className={styles.attrLabel}>Core IP</span>
-              <span>M. Reyes · S. Nakamura</span>
+              <span>{merge.coreIp.join(' · ')}</span>
             </div>
             <div className={styles.attr}>
               <span className={styles.attrLabel}>Compatibility</span>
-              <span className={styles.compat}>98% overlap</span>
+              <span className={styles.compat}>{merge.compatibility}</span>
             </div>
             <div className={styles.attr}>
               <span className={styles.attrLabel}>Total votes</span>
-              <span>403</span>
+              <span>{merge.totalVotes}</span>
             </div>
           </div>
 
           <div className={styles.mergedActions}>
-            <Link className={styles.primary} href="/pains/birthday-blindspot#propose">Join as builder</Link>
+            <Link className={styles.primary} href={`/pains/${pain.id}#propose`}>Join as builder</Link>
             <Link className={styles.ghost} href="/pains">See all pains</Link>
           </div>
         </div>
