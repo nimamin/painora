@@ -277,6 +277,13 @@
   cursor: default;
 }
 
+.publishError {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #f16068;
+}
+
 @keyframes pop-in {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }

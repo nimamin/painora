@@ -98,6 +98,13 @@ create policy "pains: auth insert" on public.pains
   for insert to authenticated
   with check (auth.uid() = created_by);
 
+-- Preview phase: allow anonymous declarations from the AI intake flow.
+-- Anonymous rows have no owner. Remove this once real auth lands.
+drop policy if exists "pains: anon insert (preview)" on public.pains;
+create policy "pains: anon insert (preview)" on public.pains
+  for insert to anon
+  with check (created_by is null);
+
 drop policy if exists "proposals: auth insert" on public.proposals;
 create policy "proposals: auth insert" on public.proposals
   for insert to authenticated

@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { publishPain } from './actions';
 import styles from './page.module.css';
 
 type Role = 'user' | 'ai';
@@ -44,8 +46,11 @@ export default function ChatClient() {
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [spec, setSpec] = useState<Spec>(EMPTY_SPEC);
+  const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
 
+  const router = useRouter();
   const windowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,6 +100,28 @@ export default function ChatClient() {
     }
   }
 
+  async function onPublish() {
+    if (!done || publishing || published) return;
+    setPublishing(true);
+    setPublishError(null);
+
+    const result = await publishPain({
+      title: spec.title ?? '',
+      context: spec.context ?? '',
+      rootCause: spec.rootCause ?? '',
+      whoFeelsIt: spec.whoFeelsIt ?? '',
+      whyItPersists: spec.whyItPersists ?? '',
+    });
+
+    if (result.ok) {
+      setPublished(true);
+      router.push(`/pains/${result.id}`);
+    } else {
+      setPublishError(result.error);
+      setPublishing(false);
+    }
+  }
+
   const filled = SPEC_KEYS.filter((k) => spec[k]).length;
   const pct = Math.round((filled / SPEC_KEYS.length) * 100);
   const statusLabel = done || filled === SPEC_KEYS.length ? 'Complete' : `${pct}% complete`;
@@ -107,6 +134,12 @@ export default function ChatClient() {
   ]
     .filter(Boolean)
     .join(' ');
+
+  const buttonLabel = published
+    ? 'Published! Redirecting…'
+    : publishing
+      ? 'Publishing…'
+      : 'Validate & publish';
 
   return (
     <div className={styles.shell}>
@@ -170,11 +203,15 @@ export default function ChatClient() {
 
           <button
             className={validateClass}
-            disabled={!done || published}
-            onClick={() => setPublished(true)}
+            disabled={!done || publishing || published}
+            onClick={onPublish}
           >
-            {published ? 'Published!' : 'Validate & publish'}
+            {buttonLabel}
           </button>
+
+          {publishError && (
+            <p className={styles.publishError}>{publishError}</p>
+          )}
         </div>
       </aside>
     </div>

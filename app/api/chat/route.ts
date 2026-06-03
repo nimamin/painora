@@ -44,10 +44,25 @@ export async function POST(request: Request) {
 
   let parsed: { reply: string; spec: Record<string, string | null>; done: boolean };
   try {
-    parsed = JSON.parse(raw);
+    parsed = JSON.parse(extractJson(raw));
   } catch {
     parsed = { reply: raw, spec: {}, done: false };
   }
 
   return NextResponse.json(parsed);
+}
+
+// The model sometimes wraps its JSON in a ```json fence or adds prose around it.
+// Strip fences first, then fall back to the outermost {...} span.
+function extractJson(text: string): string {
+  const trimmed = text.trim();
+
+  const fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fence) return fence[1].trim();
+
+  const start = trimmed.indexOf('{');
+  const end = trimmed.lastIndexOf('}');
+  if (start !== -1 && end > start) return trimmed.slice(start, end + 1);
+
+  return trimmed;
 }
