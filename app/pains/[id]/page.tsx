@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { CATEGORY_COLOR } from '@/lib/pains';
 import { getPainById, getProposals } from '@/lib/data';
 import ProposeForm from './ProposeForm';
+import VoteButton from './VoteButton';
 import styles from './page.module.css';
 
 interface PageProps {
@@ -61,12 +62,14 @@ export default async function PainDetailPage({ params }: PageProps) {
             <p className={styles.summary}>{pain.summary}</p>
 
             <div className={styles.meta}>
-              <div className={styles.stat}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M12 19V5M5 12l7-7 7 7" />
-                </svg>
-                <strong>{pain.votes.toLocaleString()}</strong> votes
-              </div>
+              <VoteButton
+                kind="pain"
+                id={pain.id}
+                votes={pain.votes}
+                className={styles.voteStat}
+                iconSize={14}
+                label
+              />
               <div className={styles.stat}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="3" width="18" height="14" rx="2" />
@@ -122,12 +125,13 @@ export default async function PainDetailPage({ params }: PageProps) {
                         <span className={styles.proposalAuthor}>{p.author}</span>
                         <h3 className={styles.proposalTitle}>{p.title}</h3>
                       </div>
-                      <div className={styles.proposalVotes}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M12 19V5M5 12l7-7 7 7" />
-                        </svg>
-                        {p.votes}
-                      </div>
+                      <VoteButton
+                        kind="proposal"
+                        id={p.id}
+                        votes={p.votes}
+                        className={styles.proposalVoteBtn}
+                        iconSize={12}
+                      />
                     </div>
                     <p className={styles.proposalSummary}>{p.summary}</p>
                   </div>
@@ -141,7 +145,7 @@ export default async function PainDetailPage({ params }: PageProps) {
             <p className={styles.proposeSub}>
               Your proposal stays visible as its own IP. The community may invite it to merge.
             </p>
-            <ProposeForm />
+            <ProposeForm painId={pain.id} />
           </section>
         </main>
 

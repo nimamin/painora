@@ -118,6 +118,13 @@ create policy "proposals: auth insert" on public.proposals
   for insert to authenticated
   with check (auth.uid() = created_by);
 
+-- Preview phase: allow anonymous proposals from the pain detail form.
+-- Anonymous rows have no owner. Remove this once real auth lands.
+drop policy if exists "proposals: anon insert (preview)" on public.proposals;
+create policy "proposals: anon insert (preview)" on public.proposals
+  for insert to anon
+  with check (created_by is null);
+
 -- Owners can update their own rows (e.g., edit a draft, refine a proposal).
 drop policy if exists "pains: owner update" on public.pains;
 create policy "pains: owner update" on public.pains
@@ -128,6 +135,30 @@ drop policy if exists "proposals: owner update" on public.proposals;
 create policy "proposals: owner update" on public.proposals
   for update to authenticated
   using (auth.uid() = created_by);
+
+-- Voting (preview phase, no auth): atomic increment via security-definer RPCs.
+-- These bypass RLS for the single votes column only, so we don't need a broad
+-- anon UPDATE policy. Deduplication is handled client-side (localStorage).
+create or replace function public.increment_pain_votes(p_id text)
+returns integer
+language sql
+security definer
+set search_path = public
+as $$
+  update public.pains set votes = votes + 1 where id = p_id returning votes;
+$$;
+
+create or replace function public.increment_proposal_votes(p_id uuid)
+returns integer
+language sql
+security definer
+set search_path = public
+as $$
+  update public.proposals set votes = votes + 1 where id = p_id returning votes;
+$$;
+
+grant execute on function public.increment_pain_votes(text) to anon, authenticated;
+grant execute on function public.increment_proposal_votes(uuid) to anon, authenticated;
 
 -- ============================================================
 -- 2. SEED DATA

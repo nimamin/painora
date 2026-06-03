@@ -231,6 +231,73 @@
   padding-top: 2px;
 }
 
+/* Interactive vote button on the pain hero (mirrors .stat). */
+.voteStat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: rgba(245, 242, 234, 0.7);
+  background: rgba(245, 242, 234, 0.05);
+  border: 1px solid rgba(245, 242, 234, 0.12);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.1s;
+}
+
+.voteStat:hover:not(:disabled) {
+  color: #f5f2ea;
+  border-color: var(--accent, rgba(245, 242, 234, 0.3));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.voteStat:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.voteStat[data-voted] {
+  color: var(--accent, #68c7d1);
+  border-color: var(--accent, #68c7d1);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  cursor: default;
+}
+
+/* Interactive vote button on each proposal card (mirrors .proposalVotes). */
+.proposalVoteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  color: rgba(245, 242, 234, 0.5);
+  white-space: nowrap;
+  background: transparent;
+  border: 1px solid rgba(245, 242, 234, 0.12);
+  border-radius: 999px;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.1s;
+}
+
+.proposalVoteBtn:hover:not(:disabled) {
+  color: #f5f2ea;
+  border-color: var(--accent, rgba(245, 242, 234, 0.3));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.proposalVoteBtn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.proposalVoteBtn[data-voted] {
+  color: var(--accent, #68c7d1);
+  border-color: var(--accent, #68c7d1);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  cursor: default;
+}
+
 .proposalSummary {
   margin: 0;
   font-size: 14px;
@@ -304,6 +371,13 @@
   color: #68c7d1;
   box-shadow: none;
   cursor: default;
+}
+
+.proposeError {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #f16068;
 }
 
 .lineageCol {
