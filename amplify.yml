@@ -7,6 +7,10 @@ frontend:
         - npm ci
     build:
       commands:
+        # Amplify exposes env vars at build time but does NOT forward plain
+        # (non-NEXT_PUBLIC_) vars to the SSR runtime. Write the server-only
+        # secrets into .env.production so Next.js reads them at request time.
+        - env | grep -e '^ANTHROPIC_API_KEY=' >> .env.production || true
         - npm run build
   artifacts:
     baseDirectory: .next
