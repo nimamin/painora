@@ -1,0 +1,510 @@
+.page {
+  min-height: 100vh;
+  padding: 32px clamp(20px, 5vw, 80px) 80px;
+  background:
+    radial-gradient(circle at 5% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 40%),
+    #0c0b11;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.back {
+  color: rgba(245, 242, 234, 0.65);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.back:hover {
+  color: #f5f2ea;
+}
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.statusNew     { background: rgba(245, 242, 234, 0.08); color: rgba(245, 242, 234, 0.6); }
+.statusActive  { background: rgba(104, 199, 209, 0.15); color: #68c7d1; }
+.statusMerging { background: rgba(243, 163, 92, 0.2); color: #f3a35c; text-decoration: none; }
+
+.primary {
+  background: linear-gradient(120deg, #f3a35c, #f16068);
+  color: #0c0b11;
+  border-radius: 999px;
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(243, 163, 92, 0.3);
+}
+
+.primary:hover {
+  transform: translateY(-2px);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 40px;
+  align-items: start;
+  max-width: 1100px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tag {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.painHero h1 {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.15;
+  margin: 0 0 16px;
+}
+
+.summary {
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgba(245, 242, 234, 0.75);
+  margin: 0 0 20px;
+  max-width: 600px;
+}
+
+.meta {
+  display: flex;
+  gap: 24px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: rgba(245, 242, 234, 0.55);
+}
+
+.stat strong {
+  color: #f5f2ea;
+}
+
+.sectionTitle {
+  font-family: var(--font-fraunces), serif;
+  font-size: 22px;
+  margin: 0 0 20px;
+  color: #f5f2ea;
+}
+
+.specSection,
+.proposalsSection,
+.proposeSection {
+  margin-top: 48px;
+  padding-top: 48px;
+  border-top: 1px solid rgba(245, 242, 234, 0.07);
+}
+
+.specGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.specField {
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(245, 242, 234, 0.03);
+  border: 1px solid rgba(245, 242, 234, 0.07);
+  transition: border-color 0.2s;
+}
+
+.specField:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(245, 242, 234, 0.4);
+  margin-bottom: 6px;
+}
+
+.fieldValue {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(245, 242, 234, 0.9);
+}
+
+.proposalsHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.proposalsHeader .sectionTitle {
+  margin: 0;
+}
+
+.count {
+  font-size: 13px;
+  color: rgba(245, 242, 234, 0.45);
+}
+
+.proposalsList {
+  display: grid;
+  gap: 14px;
+}
+
+.proposalCard {
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(18, 17, 28, 0.9);
+  border: 1px solid rgba(245, 242, 234, 0.07);
+  transition: border-color 0.2s;
+}
+
+.proposalCard:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.proposalTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.proposalAuthor {
+  display: block;
+  font-size: 12px;
+  color: rgba(245, 242, 234, 0.45);
+  margin-bottom: 4px;
+}
+
+.proposalTitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: #f5f2ea;
+  line-height: 1.35;
+}
+
+.proposalVotes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: rgba(245, 242, 234, 0.5);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+/* Interactive vote button on the pain hero (mirrors .stat). */
+.voteStat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: rgba(245, 242, 234, 0.7);
+  background: rgba(245, 242, 234, 0.05);
+  border: 1px solid rgba(245, 242, 234, 0.12);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.1s;
+}
+
+.voteStat:hover:not(:disabled) {
+  color: #f5f2ea;
+  border-color: var(--accent, rgba(245, 242, 234, 0.3));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.voteStat:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.voteStat[data-voted] {
+  color: var(--accent, #68c7d1);
+  border-color: var(--accent, #68c7d1);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  cursor: default;
+}
+
+/* Interactive vote button on each proposal card (mirrors .proposalVotes). */
+.proposalVoteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  color: rgba(245, 242, 234, 0.5);
+  white-space: nowrap;
+  background: transparent;
+  border: 1px solid rgba(245, 242, 234, 0.12);
+  border-radius: 999px;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.1s;
+}
+
+.proposalVoteBtn:hover:not(:disabled) {
+  color: #f5f2ea;
+  border-color: var(--accent, rgba(245, 242, 234, 0.3));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.proposalVoteBtn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.proposalVoteBtn[data-voted] {
+  color: var(--accent, #68c7d1);
+  border-color: var(--accent, #68c7d1);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  cursor: default;
+}
+
+.proposalSummary {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(245, 242, 234, 0.65);
+}
+
+.proposeSub {
+  margin: -8px 0 20px;
+  font-size: 14px;
+  color: rgba(245, 242, 234, 0.55);
+}
+
+.proposeForm {
+  display: grid;
+  gap: 16px;
+}
+
+.proposeForm label {
+  display: grid;
+  gap: 8px;
+}
+
+.proposeForm label span {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(245, 242, 234, 0.5);
+}
+
+.proposeForm input,
+.proposeForm textarea {
+  background: rgba(18, 17, 28, 0.9);
+  border: 1px solid rgba(245, 242, 234, 0.12);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: #f5f2ea;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.proposeForm input:focus,
+.proposeForm textarea:focus {
+  border-color: var(--accent, rgba(245, 242, 234, 0.3));
+}
+
+.proposeForm button {
+  justify-self: start;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 28px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  background: linear-gradient(120deg, #f3a35c, #f16068);
+  color: #0c0b11;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(243, 163, 92, 0.3);
+}
+
+.proposeForm button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.proposeForm button.submitted {
+  background: rgba(104, 199, 209, 0.2);
+  color: #68c7d1;
+  box-shadow: none;
+  cursor: default;
+}
+
+.proposeError {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #f16068;
+}
+
+.lineageCol {
+  position: sticky;
+  top: 32px;
+  display: grid;
+  gap: 16px;
+}
+
+.lineageCard,
+.ipCard {
+  padding: 22px;
+  border-radius: 20px;
+  background: rgba(18, 17, 28, 0.9);
+  border: 1px solid rgba(245, 242, 234, 0.07);
+}
+
+.lineageLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(245, 242, 234, 0.4);
+  margin: 0 0 20px;
+}
+
+.lineageSteps {
+  display: flex;
+  flex-direction: column;
+}
+
+.lineageStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.stepDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(245, 242, 234, 0.15);
+  border: 2px solid rgba(245, 242, 234, 0.2);
+  flex-shrink: 0;
+  margin-top: 3px;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.lineageStep.active .stepDot {
+  background: var(--accent, #68c7d1);
+  border-color: var(--accent, #68c7d1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.stepBody {
+  display: grid;
+  gap: 2px;
+  padding-bottom: 4px;
+}
+
+.stepBody strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(245, 242, 234, 0.85);
+}
+
+.stepBody span {
+  font-size: 12px;
+  color: rgba(245, 242, 234, 0.4);
+}
+
+.lineageLine {
+  width: 1px;
+  height: 20px;
+  background: rgba(245, 242, 234, 0.1);
+  margin-left: 4px;
+}
+
+.ipNote {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(245, 242, 234, 0.55);
+  margin: 0 0 14px;
+}
+
+.ipPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(104, 199, 209, 0.12);
+  color: #68c7d1;
+}
+
+.footer {
+  margin-top: 80px;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(245, 242, 234, 0.35);
+  font-size: 13px;
+}
+
+.footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fade-up 0.7s ease forwards;
+}
+
+.delay1 { animation-delay: 0.08s; }
+.delay2 { animation-delay: 0.16s; }
+.delay3 { animation-delay: 0.24s; }
+
+@keyframes fade-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 840px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .lineageCol {
+    position: static;
+  }
+}

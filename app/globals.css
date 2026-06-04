@@ -1,0 +1,16 @@
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  background: #0c0b11;
+  color: #f5f2ea;
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}

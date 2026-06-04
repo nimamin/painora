@@ -1,0 +1,510 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Declare a pain — Painora">
+	<div class="chat-page">
+		<header class="chat-header">
+			<a class="back" href="/">← Painora</a>
+			<span class="pill">AI intake — preview</span>
+		</header>
+
+		<div class="shell">
+			<!-- Left: conversation -->
+			<main class="chat-col">
+				<div class="chat-hero">
+					<h1>Declare your pain</h1>
+					<p>Describe what's hurting. AI will help you make it precise.</p>
+				</div>
+
+				<div class="chat-window" id="chatWindow">
+					<div class="bubble ai">
+						What pain are you experiencing? Describe it however feels natural — no need for technical language.
+					</div>
+				</div>
+
+				<form class="chat-input-bar" id="chatForm">
+					<input
+						id="chatInput"
+						type="text"
+						placeholder="Describe your pain..."
+						autocomplete="off"
+						autofocus
+					/>
+					<button type="submit" id="sendBtn">Send</button>
+				</form>
+			</main>
+
+			<!-- Right: live Problem Spec -->
+			<aside class="spec-col" id="specCol">
+				<div class="spec-card">
+					<div class="spec-header">
+						<span class="spec-label">Problem Specification</span>
+						<span class="spec-status" id="specStatus">Building…</span>
+					</div>
+
+					<div class="spec-fields" id="specFields">
+						<div class="field" data-key="title">
+							<span class="field-label">Pain title</span>
+							<span class="field-value empty" id="field-title">—</span>
+						</div>
+						<div class="field" data-key="context">
+							<span class="field-label">Context</span>
+							<span class="field-value empty" id="field-context">—</span>
+						</div>
+						<div class="field" data-key="rootCause">
+							<span class="field-label">Root cause</span>
+							<span class="field-value empty" id="field-rootCause">—</span>
+						</div>
+						<div class="field" data-key="whoFeelsIt">
+							<span class="field-label">Who feels it</span>
+							<span class="field-value empty" id="field-whoFeelsIt">—</span>
+						</div>
+						<div class="field" data-key="whyItPersists">
+							<span class="field-label">Why it persists</span>
+							<span class="field-value empty" id="field-whyItPersists">—</span>
+						</div>
+					</div>
+
+					<button class="validate-btn" id="validateBtn" disabled>
+						Validate &amp; publish
+					</button>
+				</div>
+			</aside>
+		</div>
+	</div>
+</Layout>
+
+<script>
+	const chatWindow = document.getElementById('chatWindow')!;
+	const chatForm = document.getElementById('chatForm')!;
+	const chatInput = document.getElementById('chatInput') as HTMLInputElement;
+	const sendBtn = document.getElementById('sendBtn')!;
+	const specStatus = document.getElementById('specStatus')!;
+	const validateBtn = document.getElementById('validateBtn') as HTMLButtonElement;
+
+	const messages: { role: 'user' | 'assistant'; content: string }[] = [];
+
+	function addBubble(text: string, role: 'user' | 'ai') {
+		const div = document.createElement('div');
+		div.className = `bubble ${role}`;
+		div.textContent = text;
+		chatWindow.appendChild(div);
+		chatWindow.scrollTop = chatWindow.scrollHeight;
+	}
+
+	function addTyping() {
+		const div = document.createElement('div');
+		div.className = 'bubble ai typing';
+		div.id = 'typingIndicator';
+		div.innerHTML = '<span></span><span></span><span></span>';
+		chatWindow.appendChild(div);
+		chatWindow.scrollTop = chatWindow.scrollHeight;
+		return div;
+	}
+
+	function removeTyping() {
+		document.getElementById('typingIndicator')?.remove();
+	}
+
+	function updateSpec(spec: Record<string, string | null>) {
+		const keys = ['title', 'context', 'rootCause', 'whoFeelsIt', 'whyItPersists'];
+		let filled = 0;
+		for (const key of keys) {
+			const el = document.getElementById(`field-${key}`)!;
+			const val = spec[key];
+			if (val) {
+				el.textContent = val;
+				el.classList.remove('empty');
+				filled++;
+			}
+		}
+		const pct = Math.round((filled / keys.length) * 100);
+		specStatus.textContent = filled === keys.length ? 'Complete' : `${pct}% complete`;
+		if (filled === keys.length) specStatus.classList.add('done');
+	}
+
+	chatForm.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const text = chatInput.value.trim();
+		if (!text) return;
+
+		chatInput.value = '';
+		chatInput.disabled = true;
+		sendBtn.setAttribute('disabled', '');
+
+		addBubble(text, 'user');
+		messages.push({ role: 'user', content: text });
+
+		const typing = addTyping();
+
+		try {
+			const res = await fetch('/api/chat', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ messages }),
+			});
+
+			const data = await res.json();
+			removeTyping();
+
+			addBubble(data.reply, 'ai');
+			messages.push({ role: 'assistant', content: JSON.stringify(data) });
+
+			if (data.spec) updateSpec(data.spec);
+
+			if (data.done) {
+				validateBtn.disabled = false;
+				validateBtn.classList.add('ready');
+				chatInput.disabled = true;
+				sendBtn.setAttribute('disabled', '');
+				specStatus.textContent = 'Complete';
+			} else {
+				chatInput.disabled = false;
+				sendBtn.removeAttribute('disabled');
+				chatInput.focus();
+			}
+		} catch {
+			removeTyping();
+			addBubble('Something went wrong. Please try again.', 'ai');
+			chatInput.disabled = false;
+			sendBtn.removeAttribute('disabled');
+		}
+	});
+
+	validateBtn.addEventListener('click', () => {
+		validateBtn.textContent = 'Published!';
+		validateBtn.classList.add('published');
+		validateBtn.disabled = true;
+	});
+</script>
+
+<style>
+	:global(body) {
+		margin: 0;
+		background: #0c0b11;
+		color: #f5f2ea;
+		font-family: 'Space Grotesk', system-ui, sans-serif;
+	}
+
+	:global(*) {
+		box-sizing: border-box;
+	}
+
+	.chat-page {
+		min-height: 100vh;
+		padding: 28px clamp(20px, 5vw, 72px) 48px;
+		background:
+			radial-gradient(circle at 15% 10%, rgba(104, 199, 209, 0.18), transparent 50%),
+			radial-gradient(circle at 85% 15%, rgba(243, 163, 92, 0.18), transparent 50%),
+			#0c0b11;
+	}
+
+	.chat-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 32px;
+	}
+
+	.back {
+		color: rgba(245, 242, 234, 0.65);
+		text-decoration: none;
+		font-size: 14px;
+		transition: color 0.2s;
+	}
+
+	.back:hover {
+		color: #f5f2ea;
+	}
+
+	.pill {
+		padding: 6px 12px;
+		border-radius: 999px;
+		background: rgba(104, 199, 209, 0.15);
+		color: #68c7d1;
+		font-size: 12px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.shell {
+		display: grid;
+		grid-template-columns: 1fr 360px;
+		gap: 32px;
+		align-items: start;
+		max-width: 1100px;
+	}
+
+	/* ── Chat column ── */
+	.chat-col {
+		display: grid;
+		gap: 20px;
+	}
+
+	.chat-hero h1 {
+		font-family: 'Fraunces', 'Times New Roman', serif;
+		font-size: clamp(28px, 4vw, 48px);
+		margin: 0 0 8px;
+		line-height: 1.1;
+	}
+
+	.chat-hero p {
+		margin: 0;
+		color: rgba(245, 242, 234, 0.7);
+		font-size: 16px;
+	}
+
+	.chat-window {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 24px;
+		border-radius: 24px;
+		background: rgba(18, 17, 28, 0.9);
+		border: 1px solid rgba(245, 242, 234, 0.07);
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+		min-height: 320px;
+		max-height: 480px;
+		overflow-y: auto;
+		scroll-behavior: smooth;
+	}
+
+	.bubble {
+		padding: 12px 16px;
+		border-radius: 16px;
+		max-width: 82%;
+		font-size: 15px;
+		line-height: 1.55;
+		animation: pop-in 0.2s ease;
+	}
+
+	.bubble.user {
+		align-self: flex-end;
+		background: linear-gradient(120deg, rgba(243, 163, 92, 0.22), rgba(241, 96, 104, 0.18));
+		border: 1px solid rgba(243, 163, 92, 0.3);
+	}
+
+	.bubble.ai {
+		align-self: flex-start;
+		background: rgba(245, 242, 234, 0.05);
+		border: 1px solid rgba(245, 242, 234, 0.09);
+	}
+
+	/* Typing indicator */
+	.bubble.typing {
+		display: flex;
+		gap: 5px;
+		align-items: center;
+		padding: 14px 18px;
+	}
+
+	.bubble.typing span {
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: rgba(245, 242, 234, 0.4);
+		animation: dot-bounce 1.2s ease-in-out infinite;
+	}
+
+	.bubble.typing span:nth-child(2) {
+		animation-delay: 0.2s;
+	}
+
+	.bubble.typing span:nth-child(3) {
+		animation-delay: 0.4s;
+	}
+
+	.chat-input-bar {
+		display: flex;
+		gap: 12px;
+		padding: 12px 16px;
+		border-radius: 18px;
+		border: 1px solid rgba(245, 242, 234, 0.18);
+		background: rgba(12, 11, 17, 0.85);
+		backdrop-filter: blur(12px);
+	}
+
+	.chat-input-bar input {
+		flex: 1;
+		border: none;
+		background: transparent;
+		color: #f5f2ea;
+		font-size: 15px;
+		outline: none;
+		font-family: inherit;
+	}
+
+	.chat-input-bar input::placeholder {
+		color: rgba(245, 242, 234, 0.35);
+	}
+
+	.chat-input-bar input:disabled {
+		opacity: 0.5;
+	}
+
+	.chat-input-bar button {
+		border: none;
+		border-radius: 999px;
+		padding: 10px 20px;
+		font-size: 14px;
+		font-family: inherit;
+		background: linear-gradient(120deg, #f3a35c, #f16068);
+		color: #0c0b11;
+		cursor: pointer;
+		transition: opacity 0.2s, transform 0.15s;
+		font-weight: 500;
+	}
+
+	.chat-input-bar button:hover:not(:disabled) {
+		transform: translateY(-1px);
+	}
+
+	.chat-input-bar button:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+
+	/* ── Spec column ── */
+	.spec-col {
+		position: sticky;
+		top: 28px;
+	}
+
+	.spec-card {
+		background: rgba(18, 17, 28, 0.9);
+		border-radius: 24px;
+		border: 1px solid rgba(245, 242, 234, 0.08);
+		padding: 24px;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+	}
+
+	.spec-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 20px;
+	}
+
+	.spec-label {
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
+		color: rgba(245, 242, 234, 0.5);
+	}
+
+	.spec-status {
+		font-size: 12px;
+		color: rgba(245, 242, 234, 0.5);
+		padding: 4px 10px;
+		border-radius: 999px;
+		background: rgba(245, 242, 234, 0.06);
+		transition: background 0.4s, color 0.4s;
+	}
+
+	.spec-status.done {
+		background: rgba(104, 199, 209, 0.2);
+		color: #68c7d1;
+	}
+
+	.spec-fields {
+		display: grid;
+		gap: 12px;
+		margin-bottom: 20px;
+	}
+
+	.field {
+		padding: 12px 14px;
+		border-radius: 14px;
+		background: rgba(245, 242, 234, 0.04);
+		border: 1px solid rgba(245, 242, 234, 0.06);
+		display: grid;
+		gap: 4px;
+		transition: border-color 0.3s, background 0.3s;
+	}
+
+	.field:has(.field-value:not(.empty)) {
+		border-color: rgba(104, 199, 209, 0.2);
+		background: rgba(104, 199, 209, 0.05);
+	}
+
+	.field-label {
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.14em;
+		color: rgba(245, 242, 234, 0.45);
+	}
+
+	.field-value {
+		font-size: 14px;
+		line-height: 1.45;
+		transition: color 0.3s;
+	}
+
+	.field-value.empty {
+		color: rgba(245, 242, 234, 0.2);
+	}
+
+	.validate-btn {
+		width: 100%;
+		padding: 14px;
+		border-radius: 14px;
+		border: none;
+		font-size: 15px;
+		font-family: inherit;
+		font-weight: 500;
+		background: rgba(245, 242, 234, 0.08);
+		color: rgba(245, 242, 234, 0.35);
+		cursor: not-allowed;
+		transition: all 0.3s ease;
+	}
+
+	.validate-btn.ready {
+		background: linear-gradient(120deg, #f3a35c, #f16068);
+		color: #0c0b11;
+		cursor: pointer;
+		box-shadow: 0 8px 24px rgba(243, 163, 92, 0.35);
+	}
+
+	.validate-btn.ready:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 12px 32px rgba(243, 163, 92, 0.45);
+	}
+
+	.validate-btn.published {
+		background: rgba(104, 199, 209, 0.25);
+		color: #68c7d1;
+		cursor: default;
+	}
+
+	@keyframes pop-in {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes dot-bounce {
+		0%, 80%, 100% {
+			transform: translateY(0);
+		}
+		40% {
+			transform: translateY(-6px);
+		}
+	}
+
+	@media (max-width: 800px) {
+		.shell {
+			grid-template-columns: 1fr;
+		}
+
+		.spec-col {
+			position: static;
+		}
+	}
+</style>
