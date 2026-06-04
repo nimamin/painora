@@ -105,19 +105,28 @@ export default function ChatClient() {
     setPublishing(true);
     setPublishError(null);
 
-    const result = await publishPain({
-      title: spec.title ?? '',
-      context: spec.context ?? '',
-      rootCause: spec.rootCause ?? '',
-      whoFeelsIt: spec.whoFeelsIt ?? '',
-      whyItPersists: spec.whyItPersists ?? '',
-    });
+    try {
+      const result = await publishPain({
+        title: spec.title ?? '',
+        context: spec.context ?? '',
+        rootCause: spec.rootCause ?? '',
+        whoFeelsIt: spec.whoFeelsIt ?? '',
+        whyItPersists: spec.whyItPersists ?? '',
+      });
 
-    if (result.ok) {
-      setPublished(true);
-      router.push(`/pains/${result.id}`);
-    } else {
-      setPublishError(result.error);
+      if (result.ok) {
+        setPublished(true);
+        router.push(`/pains/${result.id}`);
+      } else {
+        setPublishError(result.error);
+        setPublishing(false);
+      }
+    } catch (err) {
+      // A thrown Server Action (e.g. blocked Origin, network failure) would
+      // otherwise vanish silently. Surface it so publishing never looks like a no-op.
+      setPublishError(
+        err instanceof Error ? err.message : 'Publishing failed. Please try again.',
+      );
       setPublishing(false);
     }
   }
